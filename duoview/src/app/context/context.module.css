@@ -1,0 +1,25 @@
+.contextform
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--font-circular);
+}
+
+.contextheader
+{
+    font-size: xx-large;
+    animation-fill-mode: forwards;
+    animation: fadeInUp 1.5s;
+}
+
+@keyframes fadeInUp {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
