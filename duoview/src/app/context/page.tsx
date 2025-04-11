@@ -2,11 +2,9 @@
 
 export default function context()
 {
-    return
-    (
+    return(
         <div>
-            
-            <p>Context Page</p> 
-        </div>    
-    );
+            <p>Context page</p>
+        </div>
+    )
 }
