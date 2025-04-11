@@ -1,4 +1,12 @@
+'use client';
+
 export default function context()
 {
-    return<p>Context Page</p>
+    return
+    (
+        <div>
+            
+            <p>Context Page</p> 
+        </div>    
+    );
 }
