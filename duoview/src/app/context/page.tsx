@@ -82,44 +82,40 @@ export default function context()
 
 
     return(
-        <div className={styles.contextform}>
-            <h1 className={styles.contextheader}>Submit context for your interview!</h1>
-
-            {/*Textbox to copy paste job description context*/}
-            <p className={styles.textinputp}>Copy and paste company info and job description here</p>
-            <div>
-                <textarea className={styles.textinput} defaultValue={textboxinput}
-                onChange={(e) => Settextboxinput(e.target.value)}
-                onClick={() => {
-                    if (textboxinput === 'Enter job/internship description here...') {
-                      Settextboxinput('');
-                    }}}
-                >
-                
-                </textarea>
+        <div className={styles.pageWrapper}>
+            <div className={styles.contextform}>
+                <h1 className={styles.contextheader}>Submit context for your interview!</h1>
+    
+                <p className={styles.textinputp}>Copy and paste company info and job description here</p>
+                <div>
+                    <textarea className={styles.textinput} defaultValue={textboxinput}
+                    onChange={(e) => Settextboxinput(e.target.value)}
+                    onClick={() => {
+                        if (textboxinput === 'Enter job/internship description here...') {
+                          Settextboxinput('');
+                        }}}
+                    />
+                </div>
+    
+                <div className={styles.uploadBox}>
+                    <p className={styles.resumetextp}>Upload PDF of your resume</p>
+                    <label className={styles.resumefile} htmlFor='resumeUpload'>
+                        {resumefile ? resumefile.name : 'Upload Resume'}
+                    </label>
+                    <input
+                        type="file"
+                        id="resumeUpload"
+                        accept=".pdf"
+                        className={styles.fileInput}
+                        onChange={Handlefilechange}
+                    />
+                </div>
+    
+                <button className={styles.submitbutton} onClick={HandleSubmit}>
+                    <span>Submit</span>
+                </button>
             </div>
-
-            
-            {/*Button where you upload your resume PDF*/}
-            <p className={styles.resumetextp}>Upload PDF of your resume</p>
-            <div>
-                <label className={styles.resumefile} htmlFor='resumeUpload'>
-                    {resumefile ? resumefile.name : 'Upload Resume'}
-                </label>
-                <input
-                    type="file"
-                    id="resumeUpload"
-                    accept=".pdf"
-                    className={styles.fileInput}
-                    onChange={Handlefilechange}
-                />
-            </div>
-
-            {/*Button to submit PDF and job desc to chat gpt as context*/}
-            <button className={styles.submitbutton} onClick={HandleSubmit}>
-                <span>Submit</span>
-            </button>
-            
         </div>
     )
+    
 }
