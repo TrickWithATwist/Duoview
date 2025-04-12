@@ -29,6 +29,56 @@ export default function context()
       
     }
 
+    async function HandleSubmit()
+    {
+        //edge cases
+        if(!resumefile)
+        {
+            alert("Please upload your resume.");
+            return;
+        }
+
+        if(textboxinput === 'Enter job/internship description here...' || !textboxinput.trim())
+        {
+            alert("Please type your job/internship description.")
+            return;
+        }
+        
+        //submitting to chatgpt
+        try
+        {
+            //placeholder for converting resume to pdf
+
+            //form data
+            let formdata = new FormData();
+            formdata.append('resume', resumefile)
+            formdata.append('jobdescription', textboxinput)
+
+            // Send to our Next.js API endpoint
+            const response = await fetch('/api/processContext', {
+                method: 'POST',
+                body: formdata,
+            });
+
+            if (!response.ok) {
+                alert('Failed to process your information');
+                return;
+            }
+
+            const data = await response.json();
+            
+            //Store the interview context in localStorage for the practice page
+            localStorage.setItem('interviewContext', JSON.stringify(data));
+
+            //Navigate to the practice page
+            router.push('/practice');
+        }
+        finally
+        {
+            //just to avoid compilation error
+        }
+    }
+
 
 
     return(
@@ -66,7 +116,7 @@ export default function context()
             </div>
 
             {/*Button to submit PDF and job desc to chat gpt as context*/}
-            <button className={styles.submitbutton}>
+            <button className={styles.submitbutton} onClick={HandleSubmit}>
                 <span>Submit</span>
             </button>
             
