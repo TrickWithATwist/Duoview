@@ -131,6 +131,8 @@ box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0,
 
 .submitbutton
 {
+    animation-fill-mode: forwards;
+  animation: fadeIn 3s;
     align-items: center;
   background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
   border: 0;
