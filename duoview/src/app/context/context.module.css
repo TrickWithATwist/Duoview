@@ -10,7 +10,7 @@
 {
     font-size: xx-large;
     animation-fill-mode: forwards;
-    animation: fadeInUp 1.5s;
+    animation: fadeInUp 1s;
     padding-bottom: 2 rem;
 }
 
