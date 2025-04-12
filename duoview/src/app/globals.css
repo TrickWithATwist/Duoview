@@ -27,3 +27,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.duoviewlogo
+{
+  background-image: url(./images/Duoviewimage.png);
+  background-size: auto;
+}
