@@ -8,15 +8,16 @@ export default function context()
         <div className={styles.contextform}>
             <h1 className={styles.contextheader}>Submit context for your interview!</h1>
 
-            <p>Copy and paste company info and job description here</p>
+            <p className={styles.textinputp}>Copy and paste company info and job description here</p>
             <div>
-                <textarea className={styles.textinput}>
-
+                <textarea className={styles.textinput} defaultValue={'Enter job/internship description here...'}>
+                
                 </textarea>
             </div>
 
+            
 
-            <p>Upload PDF of your resume</p>
+            <p className={styles.resumetextp}>Upload PDF of your resume</p>
             <div>
                 <label className={styles.resumefile} htmlFor='resumeUpload'>
                 Upload Resume
@@ -28,7 +29,11 @@ export default function context()
                     className={styles.fileInput}
                 />
             </div>
-            <p>Context page</p>
+
+            <button className={styles.submitbutton}>
+                <span>Submit</span>
+            </button>
+            
         </div>
     )
 }
