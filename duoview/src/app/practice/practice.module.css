@@ -1,0 +1,189 @@
+.practiceContainer {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background-color: #f5f8fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
+  /* Avatar Panel Styles */
+  .avatarPanel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-right: 1px solid #e1e8ed;
+  }
+  
+  .avatarContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .avatar {
+    width: 300px;
+    height: 300px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.2s ease;
+    margin-bottom: 20px;
+  }
+  
+  .avatarTitle {
+    color: #ff3366;
+    font-size: 2rem;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  /* Conversation Panel Styles */
+  .conversationPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+  
+  .questionBubble, .answerBubble {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+  }
+  
+  .questionBubble {
+    align-self: flex-start;
+    background-color: #e1f5fe;
+    border-bottom-left-radius: 5px;
+  }
+  
+  .answerBubble {
+    align-self: flex-end;
+    background-color: #e8f5e9;
+    border-bottom-right-radius: 5px;
+  }
+  
+  .questionBubble p, .answerBubble p {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .audioPlayer {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* Controls Styles */
+  .controls {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navButton {
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .navButton:hover {
+    background-color: #1976d2;
+  }
+  
+  .navButton:disabled {
+    background-color: #bbdefb;
+    cursor: not-allowed;
+  }
+  
+  .micContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .micButton {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #ff3366;
+    color: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(255, 51, 102, 0.4);
+  }
+  
+  .micButton:hover {
+    transform: scale(1.05);
+  }
+  
+  .recording {
+    background-color: #f44336;
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+    }
+  }
+  
+  .micIcon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .recordingStatus {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #555;
+  }
+  
+  /* Loading and Error Styles */
+  .loadingContainer, .errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .errorContainer button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }

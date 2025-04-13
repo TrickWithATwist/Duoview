@@ -11,6 +11,7 @@ export default function context()
     let [textboxinput, Settextboxinput] = useState('Enter job/internship description here...')
     let [resumefile, Setresumefile] = useState(null)
     let [resumetext, Setresumetext] = useState('')
+    let [isLoading, setIsLoading] = useState(false) // Add this loading state
 
     //functions to handle file change and submissions
     async function Handlefilechange(e) 
@@ -47,6 +48,8 @@ export default function context()
         //submitting to chatgpt
         try
         {
+            setIsLoading(true); // Start loading
+            
             //placeholder for converting resume to pdf
 
             //form data
@@ -73,9 +76,16 @@ export default function context()
             //Navigate to the practice page
             router.push('/practice');
         }
+        catch (error) {
+            console.error("Error submitting context:", error);
+            if(error instanceof Error)
+            {
+                alert("An error occurred: " + error.message);
+            }
+        }
         finally
         {
-            //just to avoid compilation error
+            setIsLoading(false); // End loading regardless of outcome
         }
     }
 
@@ -109,10 +119,15 @@ export default function context()
                         className={styles.fileInput}
                         onChange={Handlefilechange}
                     />
+                    {resumetext && <p className={styles.filePreview}>{resumetext}</p>}
                 </div>
     
-                <button className={styles.submitbutton} onClick={HandleSubmit}>
-                    <span>Submit</span>
+                <button 
+                    className={styles.submitbutton} 
+                    onClick={HandleSubmit}
+                    disabled={isLoading}
+                >
+                    <span>{isLoading ? 'Processing...' : 'Submit'}</span>
                 </button>
             </div>
         </div>
