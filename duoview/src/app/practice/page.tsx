@@ -29,6 +29,8 @@ export default function PracticePage() {
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<string[]>([]);
   const [interviewData, setInterviewData] = useState<any>(null); // or better: define an interface
+  const [feedbackText, setFeedbackText] = useState<string | null>(null);
+
   
   // Avatar animation states
   const [avatarState, setAvatarState] = useState('idle'); // idle, talking, blinking
@@ -158,13 +160,15 @@ export default function PracticePage() {
           console.log("🎤 Transcript:", data.transcript);
           console.log("🧠 Feedback:", data.feedback);
       
-          // Speak GPT feedback
-          simulateAvatarTalking(data.feedback);
+          setFeedbackText(data.feedback); // ✅ update state
+          simulateAvatarTalking(data.feedback); // speak it
         } catch (err) {
           console.error("❌ Feedback error:", err);
+          setFeedbackText("Hmm... I couldn't process your answer. Try again?");
           simulateAvatarTalking("Hmm... I couldn't process your answer. Try again?");
         }
-      }
+      };
+      
 
       recorder.start();
       setMediaRecorder(recorder);
@@ -244,9 +248,16 @@ export default function PracticePage() {
 
         {audioBlob && (
           <div className={styles.answerBubble}>
-            <p>Your Answer:</p>
-            <audio src={URL.createObjectURL(audioBlob)} controls className={styles.audioPlayer} />
-          </div>
+          <p>Your Answer:</p>
+          <audio src={URL.createObjectURL(audioBlob)} controls className={styles.audioPlayer} />
+          
+          {feedbackText && (
+            <div className={styles.feedbackBubble}>
+              <p className={styles.feedbackLabel}>Feedback:</p>
+              <p className={styles.feedbackText}>{feedbackText}</p>
+            </div>
+          )}
+        </div>
         )}
 
         <div className={styles.controls}>

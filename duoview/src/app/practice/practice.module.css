@@ -187,3 +187,30 @@
     border-radius: 4px;
     cursor: pointer;
   }
+
+  .feedbackBubble {
+    background-color: #e0f2fe;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    align-self: flex-start;
+    max-width: 80%;
+  }
+
+  .feedbackLabel {
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feedbackText {
+    font-size: 1rem;
+    color: #111827;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
