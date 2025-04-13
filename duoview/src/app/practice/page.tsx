@@ -9,17 +9,25 @@ export default function PracticePage() {
   ///speach 
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1; // Adjust for natural pace
       utterance.pitch = 1;
       utterance.volume = 1;
+      
       utterance.onstart = () => setAvatarState('talking');
       utterance.onend = () => setAvatarState('idle');
+      
       window.speechSynthesis.speak(utterance);
     } else {
       console.warn("Speech synthesis not supported in this browser.");
+      // Fallback for browsers without speech synthesis
+      setAvatarState('talking');
+      setTimeout(() => setAvatarState('idle'), 2000);
     }
-  };  
+  };
   
   const [currentQuestion, setCurrentQuestion] = useState(0);
   
@@ -76,26 +84,41 @@ export default function PracticePage() {
   
       const raw = parsed.questions as string;
   
-      // 2. Extract questions using regex
-      const questionRegex = /\*\*Question:\*\*\s*(.+?)(?=(\n|$))/g;
+      // 2. Improved regex to extract only the questions
+      const questionRegex = /\*\*Question\*\*:\s*(.*?)(?=\n\s*\*\*Guidance\*\*|\n\d+\.|$)/gs;
       const extracted: string[] = [];
       let match: RegExpExecArray | null;
   
       while ((match = questionRegex.exec(raw)) !== null) {
-        extracted.push(match[1].trim());
+        if (match[1] && match[1].trim()) {
+          extracted.push(match[1].trim());
+        }
       }
   
-      // 3. Fallback: if nothing matched, split on double newlines
+      // 3. Fallback: if nothing matched with the primary regex
       if (extracted.length === 0) {
-        raw.split('\n\n').forEach(chunk => {
-          const line = chunk.trim().split('\n')[0];
-          if (line) extracted.push(line);
-        });
+        // Try another approach targeting numbered questions
+        const numberedQuestionRegex = /\d+\.\s+\*\*Question\*\*:\s*(.*?)(?=\s*\*\*Guidance\*\*|\n\d+\.|$)/gs;
+        
+        while ((match = numberedQuestionRegex.exec(raw)) !== null) {
+          if (match[1] && match[1].trim()) {
+            extracted.push(match[1].trim());
+          }
+        }
       }
   
       // 4. Set final questions
-      setQuestions(extracted.length > 0 ? extracted : ['No questions available']);
-      simulateAvatarTalking();
+      const extractedQuestions = extracted.length > 0 ? extracted : ['No questions available'];
+      console.log("✅ Extracted questions:", extractedQuestions);
+      setQuestions(extractedQuestions);
+      
+      // 5. Speak the first question after a delay
+      setTimeout(() => {
+        if (extractedQuestions && extractedQuestions.length > 0) {
+          console.log("Speaking first question:", extractedQuestions[0]);
+          speakText(extractedQuestions[0]);
+        }
+      }, 800);
   
     } catch (err) {
       console.error("❌ Error parsing interview context:", err);
@@ -221,12 +244,12 @@ export default function PracticePage() {
   const getAvatarImage = () => {
     switch (avatarState) {
       case 'blinking':
-        return '/avatar-blink.png';
+        return '/avatar-blink.svg';
       case 'talking':
-        return '/avatar-talk.png';
+        return '/avatar-talk.svg';
       case 'idle':
       default:
-        return '/avatar-idle.png';
+        return '/avatar-idle.svg';
     }
   };
 
@@ -237,7 +260,7 @@ export default function PracticePage() {
           <div className={styles.avatar} style={{ backgroundImage: `url(${getAvatarImage()})` }}>
             {/* Avatar will be displayed as background image */}
           </div>
-          <h2 className={styles.avatarTitle}>Interviewer</h2>
+          
         </div>
       </div>
 

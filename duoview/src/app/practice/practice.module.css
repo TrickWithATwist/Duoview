@@ -11,8 +11,8 @@
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
+    align-items: flex-end; /* Align to bottom */
+    padding: 10px;
     background-color: #fff;
     border-right: 1px solid #e1e8ed;
   }
@@ -22,26 +22,20 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 400px;
+    max-width: none;
+    margin-bottom: 50px; /* Increased bottom margin to push it lower */
   }
   
   .avatar {
-    width: 300px;
-    height: 300px;
+    width: 60%; /* Reduced from 80% to 60% to make it smaller */
+    height: auto;
     background-size: contain;
-    background-position: center;
+    background-position: bottom center;
     background-repeat: no-repeat;
     transition: background-image 0.2s ease;
-    margin-bottom: 20px;
+    padding-top: 80%; /* Adjusted aspect ratio */
   }
   
-  .avatarTitle {
-    color: #ff3366;
-    font-size: 2rem;
-    margin: 0;
-    padding: 10px;
-    text-align: center;
-  }
   
   /* Conversation Panel Styles */
   .conversationPanel {
