@@ -79,53 +79,36 @@ export default function PracticePage() {
       const parsed = JSON.parse(saved);
       setInterviewData(parsed);
   
-      // 1. Log the raw GPT response for debugging
-      console.log("📝 RAW GPT QUESTIONS:", parsed.questions);
-  
       const raw = parsed.questions as string;
+      console.log("📝 RAW GPT QUESTIONS:", raw);
   
-      // 2. Improved regex to extract only the questions
-      const questionRegex = /\*\*Question\*\*:\s*(.*?)(?=\n\s*\*\*Guidance\*\*|\n\d+\.|$)/gs;
+      // Match questions prefixed with a number and optional "**Question:**" label
+      const questionRegex = /\d+\.\s*(?:\*\*Question:\*\*\s*)?(.+?)(?=\n\s*\*\*Guidance|\n\d+\.|\n*$)/gs;
+  
       const extracted: string[] = [];
       let match: RegExpExecArray | null;
   
       while ((match = questionRegex.exec(raw)) !== null) {
-        if (match[1] && match[1].trim()) {
-          extracted.push(match[1].trim());
+        const questionText = match[1].trim().replace(/\s+/g, ' ');
+        if (questionText) {
+          extracted.push(questionText);
         }
       }
   
-      // 3. Fallback: if nothing matched with the primary regex
       if (extracted.length === 0) {
-        // Try another approach targeting numbered questions
-        const numberedQuestionRegex = /\d+\.\s+\*\*Question\*\*:\s*(.*?)(?=\s*\*\*Guidance\*\*|\n\d+\.|$)/gs;
-        
-        while ((match = numberedQuestionRegex.exec(raw)) !== null) {
-          if (match[1] && match[1].trim()) {
-            extracted.push(match[1].trim());
-          }
-        }
+        extracted.push('No questions available');
       }
   
-      // 4. Set final questions
-      const extractedQuestions = extracted.length > 0 ? extracted : ['No questions available'];
-      console.log("✅ Extracted questions:", extractedQuestions);
-      setQuestions(extractedQuestions);
-      
-      // 5. Speak the first question after a delay
-      setTimeout(() => {
-        if (extractedQuestions && extractedQuestions.length > 0) {
-          console.log("Speaking first question:", extractedQuestions[0]);
-          speakText(extractedQuestions[0]);
-        }
-      }, 800);
-  
+      setQuestions(extracted);
+      simulateAvatarTalking(extracted[0]); // speak first question
     } catch (err) {
       console.error("❌ Error parsing interview context:", err);
+      setQuestions(['No questions available']);
     } finally {
       setLoading(false);
     }
   }, []);
+  
   
 
   // Function to make avatar appear to talk
