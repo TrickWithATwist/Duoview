@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export async function POST(request) {
+    console.log(process.env.OPENAI_API_KEY)
   try {
     console.log("route hit")
     // Initialize OpenAI client with your API key
