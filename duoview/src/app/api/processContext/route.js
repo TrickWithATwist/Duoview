@@ -1,3 +1,5 @@
+// force this API route to use the Node.js runtime
+export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 

@@ -4,13 +4,31 @@ import styles from './practice.module.css';
 import Image from 'next/image';
 
 export default function PracticePage() {
-  const [interviewData, setInterviewData] = useState(null);
+
+
+  ///speach 
+  const speakText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1; // Adjust for natural pace
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      utterance.onstart = () => setAvatarState('talking');
+      utterance.onend = () => setAvatarState('idle');
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Speech synthesis not supported in this browser.");
+    }
+  };  
+  
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [questions, setQuestions] = useState([]);
+  
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [interviewData, setInterviewData] = useState<any>(null); // or better: define an interface
   
   // Avatar animation states
   const [avatarState, setAvatarState] = useState('idle'); // idle, talking, blinking
@@ -41,39 +59,73 @@ export default function PracticePage() {
   }, [avatarState]);
 
   useEffect(() => {
-    // Retrieve the context from localStorage
-    const savedContext = localStorage.getItem('interviewContext');
-    if (savedContext) {
-      try {
-        const parsedContext = JSON.parse(savedContext);
-        setInterviewData(parsedContext);
-        
-        // Parse the questions from the response
-        const questionsList = parsedContext.questions
-          .split('\n\n')
-          .filter(q => q.trim().startsWith('Question'));
-        
-        setQuestions(questionsList.length > 0 ? questionsList : ['No questions available']);
-        
-        // Simulate avatar talking when loaded
-        simulateAvatarTalking();
-      } catch (error) {
-        console.error("Error parsing interview context:", error);
-      }
+    const saved = localStorage.getItem('interviewContext');
+    if (!saved) {
+      setLoading(false);
+      return;
     }
-    
-    setLoading(false);
+  
+    try {
+      const parsed = JSON.parse(saved);
+      setInterviewData(parsed);
+  
+      // 1. Log the raw GPT response for debugging
+      console.log("📝 RAW GPT QUESTIONS:", parsed.questions);
+  
+      const raw = parsed.questions as string;
+  
+      // 2. Extract questions using regex
+      const questionRegex = /\*\*Question:\*\*\s*(.+?)(?=(\n|$))/g;
+      const extracted: string[] = [];
+      let match: RegExpExecArray | null;
+  
+      while ((match = questionRegex.exec(raw)) !== null) {
+        extracted.push(match[1].trim());
+      }
+  
+      // 3. Fallback: if nothing matched, split on double newlines
+      if (extracted.length === 0) {
+        raw.split('\n\n').forEach(chunk => {
+          const line = chunk.trim().split('\n')[0];
+          if (line) extracted.push(line);
+        });
+      }
+  
+      // 4. Set final questions
+      setQuestions(extracted.length > 0 ? extracted : ['No questions available']);
+      simulateAvatarTalking();
+  
+    } catch (err) {
+      console.error("❌ Error parsing interview context:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+  
 
   // Function to make avatar appear to talk
-  const simulateAvatarTalking = () => {
-    setAvatarState('talking');
-    
-    // Talk for a random duration between 2-4 seconds
-    const talkDuration = 2000 + Math.random() * 2000;
-    talkTimerRef.current = setTimeout(() => {
-      setAvatarState('idle');
-    }, talkDuration);
+  const simulateAvatarTalking = (text?: string) => {
+    if (!text || !window.speechSynthesis) {
+      // Fallback: just simulate mouth movement without audio
+      setAvatarState('talking');
+      const talkDuration = 2000 + Math.random() * 2000;
+      talkTimerRef.current = setTimeout(() => {
+        setAvatarState('idle');
+      }, talkDuration);
+      return;
+    }
+  
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+  
+    utterance.onstart = () => setAvatarState('talking');
+    utterance.onend = () => setAvatarState('idle');
+  
+    // Cancel any previous speech just in case
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
   };
 
   const startRecording = async () => {
@@ -86,12 +138,33 @@ export default function PracticePage() {
         chunks.push(e.data);
       };
 
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioBlob(blob);
-        // Simulate avatar talking after user stops recording
-        simulateAvatarTalking();
-      };
+      
+        const formData = new FormData();
+        formData.append('audio', blob);
+        formData.append('question', questions[currentQuestion]);
+      
+        try {
+          const res = await fetch('/api/feedback', {
+            method: 'POST',
+            body: formData,
+          });
+      
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Unknown error');
+      
+          console.log("🎤 Transcript:", data.transcript);
+          console.log("🧠 Feedback:", data.feedback);
+      
+          // Speak GPT feedback
+          simulateAvatarTalking(data.feedback);
+        } catch (err) {
+          console.error("❌ Feedback error:", err);
+          simulateAvatarTalking("Hmm... I couldn't process your answer. Try again?");
+        }
+      }
 
       recorder.start();
       setMediaRecorder(recorder);
@@ -113,7 +186,7 @@ export default function PracticePage() {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setAudioBlob(null);
-      simulateAvatarTalking(); // Make avatar talk when moving to next question
+      speakText(questions[currentQuestion + 1]); // Make avatar talk when moving to next question
     }
   };
 
@@ -144,12 +217,12 @@ export default function PracticePage() {
   const getAvatarImage = () => {
     switch (avatarState) {
       case 'blinking':
-        return '/images/avatar-blink.png';
+        return '/avatar-blink.png';
       case 'talking':
-        return '/images/avatar-talk.png';
+        return '/avatar-talk.png';
       case 'idle':
       default:
-        return '/images/avatar-idle.png';
+        return '/avatar-idle.png';
     }
   };
 
